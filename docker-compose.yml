@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  antigravity:
+    build: .
+    image: antigravity-portable:latest
+    container_name: antigravity_browser
+    shm_size: "2gb" # Recommandé pour Chromium/Electron
+    ports:
+      - "6901:6901" # Port noVNC (http)
+      - "5901:5901" # Port VNC standard
+    volumes:
+      - ./work:/home/headless/Documents/work # Persistance des fichiers de travail
+    environment:
+      - VNC_RESOLUTION=1600x900
+      - VNC_PW=antigravity # Mot de passe VNC par défaut
+    restart: unless-stopped

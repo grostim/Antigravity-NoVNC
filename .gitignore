@@ -1,0 +1,14 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Docker
+work/
+*.log
+
+# Editor directories
+.idea/
+.vscode/
+
+# Build artifacts (if any local builds happen)
+google-antigravity.deb
