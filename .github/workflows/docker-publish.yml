@@ -26,12 +26,11 @@ jobs:
 
       # Le téléchargement est maintenant géré directement dans le Dockerfile
 
-
       - name: Install cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@v3.1.1
+        uses: sigstore/cosign-installer@v3.7.0 # Mise à jour de l'action recommandée
         with:
-          cosign-release: 'v2.1.1'
+          cosign-release: 'v2.4.1' # Version de cosign mise à jour (C'est le point critique)
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
