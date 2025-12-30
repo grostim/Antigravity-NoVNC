@@ -29,12 +29,13 @@ WORKDIR /app
 COPY startup.sh /dockerstartup/custom_startup.sh
 RUN chmod +x /dockerstartup/custom_startup.sh
 
-# Téléchargement automatique de Antigravity
-# On utilise wget pour récupérer le paquet depuis l'URL officielle
-RUN wget -q -O /app/google-antigravity.deb https://antigravity.google/download/linux
+# Automation: Installation depuis le dépôt APT officiel
+# Le dépôt est hébergé sur Google Artifact Registry
+RUN echo "deb [trusted=yes] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list \
+    && apt-get update \
+    && apt-get install -y antigravity \
+    && rm -rf /var/lib/apt/lists/*
 
-# Installation de Antigravity
-RUN dpkg -i /app/google-antigravity.deb || apt-get install -f -y
 
 # Revenir à l'utilisateur par défaut 'headless'
 USER 1001

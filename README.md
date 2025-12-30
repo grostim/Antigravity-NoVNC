@@ -57,7 +57,7 @@ Vous pouvez modifier `docker-compose.yml` pour ajuster :
 
 Un workflow GitHub Actions est inclus dans `.github/workflows/docker-publish.yml`. Il est configuré pour construire et publier automatiquement l'image sur le **GitHub Container Registry** lors d'un push sur `main` ou la création d'un tag.
 
-**Note** : Le téléchargement du fichier `.deb` est géré automatiquement par le Dockerfile via `wget`, aucune étape manuelle n'est requise dans le pipeline.
+**Note** : L'installation est gérée automatiquement par le Dockerfile via le dépôt APT officiel, aucune étape manuelle n'est requise.
 
 ## ❓ Dépannage
 

@@ -2,10 +2,10 @@ name: Docker Publish
 
 on:
   push:
-    branches: [ "main" ]
-    tags: [ 'v*.*.*' ]
+    branches: ["main"]
+    tags: ["v*.*.*"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   REGISTRY: ghcr.io
@@ -13,7 +13,6 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -24,14 +23,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Le téléchargement est maintenant géré directement dans le Dockerfile
-
+      # Installation automatisée dans le Dockerfile via APT
 
       - name: Install cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@v3.1.1
         with:
-          cosign-release: 'v2.1.1'
+          cosign-release: "v2.1.1"
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
