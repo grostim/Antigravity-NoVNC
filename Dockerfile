@@ -8,9 +8,8 @@ USER 0
 # Installation des dépendances pour Electron/Antigravity et utilitaires
 RUN apt-get update && apt-get install -y \
     libnss3 \
-    libasound2 \
+    libasound2t64 \
     libgbm1 \
-    libgconf-2-4 \
     libgtk-3-0 \
     libx11-xcb1 \
     libxss1 \
