@@ -22,8 +22,6 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Plus besoin de copier startup.sh ici
-
 # Installation Antigravity
 RUN echo "deb [trusted=yes] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list \
     && apt-get update \
