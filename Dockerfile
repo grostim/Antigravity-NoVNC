@@ -15,6 +15,8 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     xdg-utils \
     wget \
+    git \
+    gnome-keyring \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
