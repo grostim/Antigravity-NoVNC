@@ -2,8 +2,7 @@ version: '3.8'
 
 services:
   antigravity:
-    build: .
-    image: antigravity-portable:latest
+    image: ghcr.io/grostim/antigravity-novnc:latest
     container_name: antigravity_browser
     shm_size: "2gb" # Recommandé pour Chromium/Electron
     ports:
