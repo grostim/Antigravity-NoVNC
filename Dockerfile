@@ -28,6 +28,10 @@ RUN echo "deb [trusted=yes] https://us-central1-apt.pkg.dev/projects/antigravity
     && apt-get install -y antigravity \
     && rm -rf /var/lib/apt/lists/*
 
+# Fix permissions for headless user
+RUN chown -R 1001:0 /home/headless /dockerstartup \
+    && chmod -R 775 /home/headless /dockerstartup
+
 USER 1001
 
 # L'ENTRYPOINT par défaut de l'image de base s'occupera de VNC.
