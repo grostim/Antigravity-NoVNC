@@ -15,6 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
+          token: ${{ secrets.PAT }}
           fetch-depth: 0 # Necessary to fetch all tags for version calculation
 
       - name: Install dependencies and setup apt
