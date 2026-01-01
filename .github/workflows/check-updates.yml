@@ -1,0 +1,103 @@
+name: Check for Upstream Updates
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Run every hour
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Necessary to fetch all tags for version calculation
+
+      - name: Install dependencies and setup apt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl gnupg lsb-release
+          echo "deb [trusted=yes] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" | sudo tee /etc/apt/sources.list.d/antigravity.list
+          sudo apt-get update
+
+      - name: Check latest upstream version
+        id: upstream
+        run: |
+          # Get the candidate version from apt-cache policy
+          # Example output line: "  Candidate: 1.2.3"
+          CANDIDATE=$(apt-cache policy antigravity | grep "Candidate:" | awk '{print $2}')
+          
+          if [ -z "$CANDIDATE" ] || [ "$CANDIDATE" = "(none)" ]; then
+            echo "Error: Could not determine candidate version."
+            exit 1
+          fi
+          
+          echo "Latest upstream version: $CANDIDATE"
+          echo "version=$CANDIDATE" >> $GITHUB_OUTPUT
+
+      - name: Check current version from file
+        id: current
+        run: |
+          if [ -f antigravity-version.txt ]; then
+            CURRENT_VERSION=$(cat antigravity-version.txt)
+          else
+            CURRENT_VERSION="0.0.0"
+          fi
+          
+          echo "Current file version: $CURRENT_VERSION"
+          echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Compare, Update and Tag
+        env:
+          UPSTREAM_VER: ${{ steps.upstream.outputs.version }}
+          CURRENT_VER: ${{ steps.current.outputs.version }}
+        run: |
+          if [ "$UPSTREAM_VER" != "$CURRENT_VER" ]; then
+             if dpkg --compare-versions "$UPSTREAM_VER" "gt" "$CURRENT_VER"; then
+               echo "New version detected: $UPSTREAM_VER > $CURRENT_VER"
+               
+               # 1. Update the version file
+               echo "$UPSTREAM_VER" > antigravity-version.txt
+               
+               # 2. Commit the change
+               git config --global user.name "GitHub Actions"
+               git config --global user.email "actions@github.com"
+               
+               git add antigravity-version.txt
+               git commit -m "chore: update antigravity version to $UPSTREAM_VER"
+               
+               # 3. Calculate next minor version for the repository tag
+               # Get the latest tag, default to v0.0.0 if none
+               LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+               echo "Latest repo tag: $LATEST_TAG"
+               
+               # Strip 'v'
+               VERSION_NUM="${LATEST_TAG#v}"
+               
+               # Split into parts
+               IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NUM"
+               
+               # Increment Minor, reset Patch
+               NEXT_MINOR=$((MINOR + 1))
+               NEXT_TAG="v$MAJOR.$NEXT_MINOR.0"
+               
+               echo "Calculated next tag: $NEXT_TAG"
+               
+               # 4. Tag and Push
+               git tag "$NEXT_TAG"
+               
+               # Push commit and tags
+               git push origin main
+               git push origin "$NEXT_TAG"
+               
+               echo "Updated version file, committed, and pushed tag $NEXT_TAG."
+             else
+               echo "Upstream version ($UPSTREAM_VER) is not greater than current ($CURRENT_VER). Skipping."
+             fi
+          else
+             echo "Versions match ($UPSTREAM_VER). No update needed."
+          fi
