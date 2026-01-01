@@ -66,3 +66,5 @@ A GitHub Actions workflow is included in `.github/workflows/docker-publish.yml`.
 - **Black screen?** Refresh the page or wait a few seconds for XFCE to finish loading.
 - **Antigravity not starting?** Check the logs: `docker-compose logs antigravity`.
 - **Permissions?** If you cannot write to the `work` folder, check the permissions of the `./work` folder on your host machine (`chmod 777 work` to test).
+
+> **Fun Fact**: This Docker image was designed by Antigravity itself. Who needs humans anyway? 🤖✨
