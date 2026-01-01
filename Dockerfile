@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     git \
     gnome-keyring \
+    sudo \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -29,11 +30,18 @@ RUN echo "deb [trusted=yes] https://us-central1-apt.pkg.dev/projects/antigravity
     && rm -rf /var/lib/apt/lists/*
 
 # Fix permissions for headless user
-RUN chown -R 1001:0 /home/headless /dockerstartup \
+RUN chown -R 1001:1001 /home/headless /dockerstartup \
     && chmod -R 775 /home/headless /dockerstartup
+
+# Configure sudo for headless user
+RUN echo "headless ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/headless \
+    && chmod 0440 /etc/sudoers.d/headless
+
+COPY startup.sh /app/startup.sh
+RUN chmod +x /app/startup.sh
 
 USER 1001
 
 # L'ENTRYPOINT par défaut de l'image de base s'occupera de VNC.
-# On définit simplement la commande à lancer une fois l'environnement prêt.
-CMD ["antigravity", "--no-sandbox", "--disable-dev-shm-usage"]
+# On définit simplement la commande à lancer une fois l'environnement prêt via notre script de démarrage.
+CMD ["/app/startup.sh", "antigravity", "--no-sandbox", "--disable-dev-shm-usage"]
