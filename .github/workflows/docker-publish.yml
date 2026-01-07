@@ -87,7 +87,7 @@ jobs:
           sleep 20
           
           echo "--- Checking for VNC process..."
-          docker exec smoke-test-container pgrep -x Xtigervnc
+          docker exec smoke-test-container pgrep -x Xvnc
           
           echo "--- VNC process found. Smoke test passed."
 
