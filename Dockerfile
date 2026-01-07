@@ -1,4 +1,4 @@
-FROM accetto/ubuntu-vnc-xfce-chromium-g3:g3.24.04.1
+FROM accetto/ubuntu-vnc-xfce-chromium-g3:24.04
 
 USER 0
 
