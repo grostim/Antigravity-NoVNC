@@ -67,6 +67,30 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Smoke Test
+        run: |
+          set -e
+          IMAGE_TO_TEST=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
+          
+          cleanup() {
+            echo "--- Cleaning up smoke test container..."
+            docker logs smoke-test-container || true
+            docker stop smoke-test-container || true
+            docker rm smoke-test-container || true
+          }
+          trap cleanup EXIT
+
+          echo "--- Testing image: $IMAGE_TO_TEST"
+          docker run -d --name smoke-test-container "$IMAGE_TO_TEST"
+          
+          echo "--- Waiting for container to start..."
+          sleep 20
+          
+          echo "--- Checking for VNC process..."
+          docker exec smoke-test-container pgrep -x Xtigervnc
+          
+          echo "--- VNC process found. Smoke test passed."
+
       - name: Sign the published Docker image
         if: ${{ github.event_name != 'pull_request' }}
         env:

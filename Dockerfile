@@ -1,4 +1,4 @@
-FROM accetto/ubuntu-vnc-xfce-chromium-g3:latest
+FROM accetto/ubuntu-vnc-xfce-chromium-g3:g3.24.04.1
 
 USER 0
 
@@ -24,7 +24,8 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Installation Antigravity
-RUN echo "deb [trusted=yes] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list \
+RUN curl -sL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor -o /usr/share/keyrings/antigravity-archive-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/antigravity-archive-keyring.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list \
     && apt-get update \
     && apt-get install -y antigravity \
     && rm -rf /var/lib/apt/lists/*

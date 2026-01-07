@@ -12,5 +12,6 @@ services:
       - ./work:/home/headless/Documents/work # Persistance des fichiers de travail
     environment:
       - VNC_RESOLUTION=1600x900
-      - VNC_PW=antigravity # Mot de passe VNC par défaut
+      # Définit le mot de passe VNC. Peut être surchargé par une variable d'environnement VNC_PW.
+      - VNC_PW=${VNC_PW:-antigravity} # Mot de passe VNC par défaut
     restart: unless-stopped
