@@ -73,7 +73,9 @@ jobs:
                
                # 3. Calculate next minor version for the repository tag
                # Get the latest tag, default to v0.0.0 if none
-               LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+               
+               LATEST_TAG=$(git tag --sort=-v:refname | head -n 1)
+               if [ -z "$LATEST_TAG" ]; then LATEST_TAG="v0.0.0"; fi
                echo "Latest repo tag: $LATEST_TAG"
                
                # Strip 'v'
